@@ -118,8 +118,8 @@ public class Main extends Listener {
 
 	public void onFrame(Controller controller) {
 		Frame frame = controller.frame();
-		System.out.println(frame.hands().count());
-		Hand hand = frame.hands().frontmost();
+//		System.out.println(frame.hands().count());
+//		Hand hand = frame.hands().frontmost();
 		// if(hand != null) {
 		// Frame lastFrame = controller.frame(5);
 		// Hand lastHand = lastFrame.hand(hand.id());
@@ -143,7 +143,14 @@ public class Main extends Listener {
 		// return;
 		// }
 		PointableList fingers = frame.pointables();
-		System.out.println(fingers.count());
+//		System.out.println(fingers.count());
+		
+		if(fingers.count() == 10) {
+			_mappings.switchMapping();
+			System.out.println("SWITCHED MAPPING MOVE FINGERS AWAY");
+			_robot.delay(1000);
+			System.out.println("LOLOLOL?");
+		}
 
 		if (fingers.count() != 1)
 			return;
