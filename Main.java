@@ -46,10 +46,14 @@ public class Main extends Listener {
         }
     }
 
-  public void keyPress(int event)
+  public void keyPress(int event) {
+	  keyPress(event, 15);
+  }
+    
+  public void keyPress(int event, int delay)
   {
     _robot.keyPress(event);
-    _robot.delay(15);
+    _robot.delay(delay);
     _robot.keyRelease(event);
   }
 
@@ -64,8 +68,8 @@ public class Main extends Listener {
 
         Config config = controller.config();
 
-//        config.setFloat("Gesture.Swipe.MinLength", 30);
-//        config.setFloat("Gesture.Swipe.MinVelocity", 200);
+        config.setFloat("Gesture.Swipe.MinLength", 30);
+        config.setFloat("Gesture.Swipe.MinVelocity", 200);
         
 
         config.setFloat("Gesture.Circle.MinArc", (float)Math.PI * 1.8f);
@@ -146,14 +150,14 @@ public class Main extends Listener {
                     }
 
                     if(! lrSwipes.contains(swipe.id())) {
-	                    if(swipe.direction().angleTo(Vector.right()) < Math.PI / 3) {
+	                    if(swipe.direction().angleTo(Vector.right()) < Math.PI / 3 && swipe.position().getX() > 0) {
 	                    	lrSwipes.add(swipe.id());
 	                    	System.out.println("go right");
 	                        _robot.keyPress(KeyEvent.VK_CONTROL);
 	                        keyPress(KeyEvent.VK_TAB);
 	                        _robot.keyRelease(KeyEvent.VK_CONTROL);
 	                    }
-	                    if(swipe.direction().angleTo(Vector.left()) < Math.PI / 3) {
+	                    if(swipe.direction().angleTo(Vector.left()) < Math.PI / 3 && swipe.position().getX() < 0) {
 	                    	lrSwipes.add(swipe.id());
 	                    	System.out.println("go left");
 	                        _robot.keyPress(KeyEvent.VK_CONTROL);
