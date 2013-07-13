@@ -14,7 +14,7 @@ public class Mappings {
     _mapTwo = new HashMap<String, String[]>();
     _robot = robot;
     parse(FILE_NAME, _map);
-    parse(FILE_NAME, _mapTwo);
+    parse(FILE_NAME2, _mapTwo);
     /*
     _holdKeys = new HashSet<HoldKeys>();
     _holdKeys.add(HoldKeys.CTRL);
@@ -27,7 +27,7 @@ public class Mappings {
   public void switchMapping() {
     Map<String,String[]> tmp = _map;
     _map = _mapTwo;
-    _mapTwo = _map;
+    _mapTwo = tmp;
   }
 
   public Map<String,String[]> getMap() {
