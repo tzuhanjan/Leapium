@@ -5,7 +5,7 @@
 # define compiler and compiler flag variables
 # -g is debugging
 
-JFLAGS = -g -classpath ./LeapJava.jar
+JFLAGS = -g -classpath .:./LeapJava.jar
 JC = javac
 
 #
@@ -40,9 +40,7 @@ JC = javac
 # CLASSES is a macro consisting of 4 words (one for each java source file)
 #
 
-CLASSES = \
-        Sample.java \
-        Leapium.java 
+CLASSES = *.java
 
 
 #
