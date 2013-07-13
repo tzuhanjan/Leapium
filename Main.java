@@ -208,17 +208,17 @@ public class Main extends Listener {
 				System.out.println("Key Tap id: " + keyTap.id() + ", "
 						+ keyTap.state() + ", position: " + keyTap.position()
 						+ ", direction: " + keyTap.direction());
-				int numFromLeft = -1;
+				String numFromLeft = null;
 				float x = keyTap.position().getX();
 				if (x < -70)
-					numFromLeft = 1;
+					numFromLeft = Actions.KEY_TAP_ONE;
 				else if (x < 0)
-					numFromLeft = 2;
+					numFromLeft = Actions.KEY_TAP_TWO;
 				else if (x < 70)
-					numFromLeft = 3;
+					numFromLeft = Actions.KEY_TAP_THREE;
 				else
-					numFromLeft = 4;
-				keyPress(Actions.KEY_TAP_ONE + numFromLeft);
+					numFromLeft = Actions.KEY_TAP_FOUR;
+				keyPress(numFromLeft);
 				break;
 			// Go forward/back
 			case TYPE_CIRCLE:
