@@ -5,9 +5,8 @@
 # define compiler and compiler flag variables
 # -g is debugging
 
-JFLAGS = -g
+JFLAGS = -g -classpath ./LeapJava.jar
 JC = javac
-RUN = java
 
 #
 # Clear any default targets for building .class files from .java files; we 
@@ -42,6 +41,7 @@ RUN = java
 #
 
 CLASSES = \
+        Sample.java \
         Leapium.java 
 
 
