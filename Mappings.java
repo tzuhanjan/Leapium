@@ -5,12 +5,16 @@ import java.awt.Robot;
 import java.lang.reflect.Field;
 public class Mappings {
   private final static String FILE_NAME = "chrome.settings";
-  private final HashMap<String, String[]> _map;
+  private final static String FILE_NAME2 = "desktop.settings";
+  private HashMap<String, String[]> _map;
+  private HashMap<String, String[]> _mapTwo;
   private final Robot _robot;
   Mappings(Robot robot) {
     _map = new HashMap<String, String[]>();
+    _mapTwo = new HashMap<String, String[]>();
     _robot = robot;
-    parse();
+    parse(FILE_NAME, _map);
+    parse(FILE_NAME, _mapTwo);
     /*
     _holdKeys = new HashSet<HoldKeys>();
     _holdKeys.add(HoldKeys.CTRL);
@@ -18,12 +22,19 @@ public class Mappings {
     _holdKeys.add(HoldKeys.ALT);
     */
   }
-  
+ 
+
+  public void switchMapping() {
+    Map<String,String[]> tmp = _map;
+    _map = _mapTwo;
+    _mapTwo = _map;
+  }
+
   public Map<String,String[]> getMap() {
     return _map;
   }
 
-  private Map<String,String[]> parse() {
+  private void parse(String filename, HashMap<String, String[]> map) {
     try {
       FileInputStream fstream = new FileInputStream(FILE_NAME);
       DataInputStream in = new DataInputStream(fstream);
@@ -36,13 +47,11 @@ public class Mappings {
         name = line.split(",")[0];
         assert(Actions.actions.contains(name));
         value = line.split(",")[1].split("-");
-        _map.put(name,value);
+        map.put(name,value);
       }
     } catch (Exception e) {
       System.err.println(e);
     }
-
-    return _map;
   }
 
 
