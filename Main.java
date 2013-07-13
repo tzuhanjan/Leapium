@@ -68,7 +68,7 @@ public class Main extends Listener {
 
         Config config = controller.config();
 
-        config.setFloat("Gesture.Swipe.MinLength", 30);
+        config.setFloat("Gesture.Swipe.MinLength", 80);
         config.setFloat("Gesture.Swipe.MinVelocity", 200);
         
 
@@ -121,10 +121,51 @@ public class Main extends Listener {
             goDown(f, gi.position);
         }
     }
+    
+    public void zoomOut(float amount) {
+    	_robot.keyPress(KeyEvent.VK_CONTROL);
+    	keyPress(KeyEvent.VK_MINUS);
+    	_robot.keyRelease(KeyEvent.VK_CONTROL);
+    }
+    
+    public void zoomIn(float amount) {
+    	_robot.keyPress(KeyEvent.VK_CONTROL);
+    	keyPress(KeyEvent.VK_EQUALS);
+    	_robot.keyRelease(KeyEvent.VK_CONTROL);
+    	
+    }
 
     public void onFrame(Controller controller) {
         Frame frame = controller.frame();
+        System.out.println(frame.hands().count());
+        Hand hand = frame.hands().frontmost();
+//        if(hand != null) {
+//        	Frame lastFrame = controller.frame(5);
+//        	Hand lastHand = lastFrame.hand(hand.id());
+//        	System.out.println("hands: "+hand.pointables().count()+", "+hand.pointables().count());
+//        	if(hand.pointables().count() >= 2 && lastHand.pointables().count() >= 2 ) {
+//	        	float lastRadius = lastHand.sphereRadius();
+//	        	float currRadius = hand.sphereRadius();
+//	        	
+//	        	float radiusDifference = currRadius - lastRadius;
+//	        	float threshold = 1.5f;
+//	        	
+//	        	System.out.println("radiusDifference: " + radiusDifference); 
+//	        	if( radiusDifference > threshold ) {
+//	        		zoomOut(radiusDifference);
+//	        	} else if (radiusDifference < -threshold) {
+//	        		zoomIn(-radiusDifference);
+//	        	}
+//	        	
+//        	}
+//        	return;
+//        }
         PointableList fingers = frame.pointables();
+        System.out.println(fingers.count());
+        
+        if(fingers.count() != 1)
+        	return;
+        
         for( Pointable finger : fingers ) {
             if(boundFingers.containsKey(finger.id())) {
                 GestureInfo gi = boundFingers.get(finger.id());
@@ -137,27 +178,31 @@ public class Main extends Listener {
         GestureList gestures = frame.gestures();
         for (int i = 0; i < gestures.count(); i++) {
             Gesture gesture = gestures.get(i);
+            
+//            if(gesture.pointables().count() != 1)
+//            	continue;
 
             switch (gesture.type()) {
                 // Scroll up/down
                 case TYPE_SWIPE:
+                	float CONE_ANGLE = (float)Math.PI / 3;
                     SwipeGesture swipe = new SwipeGesture(gesture);
-                    if(swipe.direction().angleTo(Vector.down()) < Math.PI / 3) {
+                    if(swipe.direction().angleTo(Vector.down()) < CONE_ANGLE) {
                         goDown(swipe.pointable(), swipe.position());
                     }
-                    if(swipe.direction().angleTo(Vector.up()) < Math.PI / 3) {
+                    if(swipe.direction().angleTo(Vector.up()) < CONE_ANGLE) {
                         goUp(swipe.pointable(), swipe.position());
                     }
 
-                    if(! lrSwipes.contains(swipe.id())) {
-	                    if(swipe.direction().angleTo(Vector.right()) < Math.PI / 3 && swipe.position().getX() > 0) {
+                    if(! lrSwipes.contains(swipe.id()) && swipe.state().equals(Gesture.State.STATE_STOP)) {
+	                    if(swipe.direction().angleTo(Vector.right()) < CONE_ANGLE && swipe.position().getX() > 0) {
 	                    	lrSwipes.add(swipe.id());
 	                    	System.out.println("go right");
 	                        _robot.keyPress(KeyEvent.VK_CONTROL);
 	                        keyPress(KeyEvent.VK_TAB);
 	                        _robot.keyRelease(KeyEvent.VK_CONTROL);
 	                    }
-	                    if(swipe.direction().angleTo(Vector.left()) < Math.PI / 3 && swipe.position().getX() < 0) {
+	                    if(swipe.direction().angleTo(Vector.left()) < CONE_ANGLE && swipe.position().getX() < 0) {
 	                    	lrSwipes.add(swipe.id());
 	                    	System.out.println("go left");
 	                        _robot.keyPress(KeyEvent.VK_CONTROL);
