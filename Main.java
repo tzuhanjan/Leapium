@@ -9,6 +9,7 @@ import java.util.Map;
 import com.leapmotion.leap.*;
 import com.leapmotion.leap.Controller.PolicyFlag;
 import com.leapmotion.leap.Gesture.State;
+import com.leapmotion.leap.Gesture.Type;
 
 import java.awt.AWTException;
 import java.awt.Robot;
@@ -152,8 +153,8 @@ public class Main extends Listener {
 			System.out.println("LOLOLOL?");
 		}
 
-		if (fingers.count() != 1)
-			return;
+//		if (fingers.count() != 1)
+//			return;
 
 		for (Pointable finger : fingers) {
 			if (boundFingers.containsKey(finger.id())) {
@@ -165,6 +166,13 @@ public class Main extends Listener {
 			}
 		}
 		GestureList gestures = frame.gestures();
+		int numSwipes = 0;
+		
+		for(Gesture g : gestures) {
+			if(g.type() == Type.TYPE_SWIPE)
+				numSwipes++;
+		}
+		
 		for (int i = 0; i < gestures.count(); i++) {
 			Gesture gesture = gestures.get(i);
 
@@ -173,6 +181,11 @@ public class Main extends Listener {
 			case TYPE_SWIPE:
 				float CONE_ANGLE = (float) Math.PI / 3;
 				SwipeGesture swipe = new SwipeGesture(gesture);
+				
+				System.out.println("Swiping with "+numSwipes+" fingers");
+				if(numSwipes < 2)
+					break;
+				
 				if (swipe.direction().angleTo(Vector.down()) < CONE_ANGLE) {
 					goDown(swipe.pointable(), swipe.position());
 				}
@@ -216,15 +229,13 @@ public class Main extends Listener {
 						+ keyTap.state() + ", position: " + keyTap.position()
 						+ ", direction: " + keyTap.direction());
 				String numFromLeft = null;
-				float x = keyTap.position().getX();
-				if (x < -70)
-					numFromLeft = Actions.KEY_TAP_ONE;
-				else if (x < 0)
-					numFromLeft = Actions.KEY_TAP_TWO;
-				else if (x < 70)
-					numFromLeft = Actions.KEY_TAP_THREE;
-				else
-					numFromLeft = Actions.KEY_TAP_FOUR;
+				int xPos = keyTap.position().getX() < 0 ? 0 : 1;
+				int yPos = keyTap.position().getY() < 100 ? 1 : 0;
+				String[] actions = new String[] {Actions.KEY_TAP_ONE, Actions.KEY_TAP_TWO, Actions.KEY_TAP_THREE, Actions.KEY_TAP_FOUR};
+				numFromLeft = actions[xPos + 2 * yPos];
+				
+				System.out.println(xPos + 2 * yPos);
+
 				keyPress(numFromLeft);
 				break;
 			// Go forward/back

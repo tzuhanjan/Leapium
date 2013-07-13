@@ -25,7 +25,7 @@ public class Mappings {
  
 
   public void switchMapping() {
-    Map<String,String[]> tmp = _map;
+    HashMap<String,String[]> tmp = _map;
     _map = _mapTwo;
     _mapTwo = tmp;
   }
@@ -36,7 +36,7 @@ public class Mappings {
 
   private void parse(String filename, HashMap<String, String[]> map) {
     try {
-      FileInputStream fstream = new FileInputStream(FILE_NAME);
+      FileInputStream fstream = new FileInputStream(filename);
       DataInputStream in = new DataInputStream(fstream);
       BufferedReader br = new BufferedReader(new InputStreamReader(in));
       String line;
