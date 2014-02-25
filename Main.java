@@ -49,8 +49,15 @@ public class Main extends Listener {
 		// example: mappings.doAction(Actions.SWIPE_LEFT);
 	}
 
+//	public static long lastKeypress = 0;
+//	public static String lastActiontype = null;
 	private void keyPress(String action) {
-		_mappings.doAction(action);
+//		long now = System.currentTimeMillis();
+//		if(now - lastKeypress > 500 || lastActiontype.equals(action)) {
+//			lastKeypress = now;
+//			lastActiontype = action;
+			_mappings.doAction(action);
+//		}
 	}
 
 	public void onInit(Controller controller) {
@@ -64,8 +71,8 @@ public class Main extends Listener {
 
 		Config config = controller.config();
 
-		config.setFloat("Gesture.Swipe.MinLength", 80);
-		config.setFloat("Gesture.Swipe.MinVelocity", 200);
+		config.setFloat("Gesture.Swipe.MinLength", 150);
+		config.setFloat("Gesture.Swipe.MinVelocity", 400);
 
 		config.setFloat("Gesture.Circle.MinArc", (float) Math.PI * 1.8f);
 		config.setFloat("Gesture.Circle.MinRadius", 25);
@@ -91,6 +98,7 @@ public class Main extends Listener {
 			boundFingers.get(p.id()).position = position;
 			System.out.println("going down " + p.id());
 			keyPress(Actions.SWIPE_DOWN);
+			_robot.delay(50);
 		}
 	}
 
@@ -103,6 +111,7 @@ public class Main extends Listener {
 			boundFingers.get(p.id()).position = position;
 			System.out.println("going up " + p.id());
 			keyPress(Actions.SWIPE_UP);
+			_robot.delay(50);
 		}
 	}
 
@@ -119,7 +128,7 @@ public class Main extends Listener {
 
 	public void onFrame(Controller controller) {
 		Frame frame = controller.frame();
-//		System.out.println(frame.hands().count());
+//		Sy2221stem.out.println(frame.hands().count());
 //		Hand hand = frame.hands().frontmost();
 		// if(hand != null) {
 		// Frame lastFrame = controller.frame(5);
@@ -179,19 +188,11 @@ public class Main extends Listener {
 			switch (gesture.type()) {
 			// Scroll up/down
 			case TYPE_SWIPE:
-				float CONE_ANGLE = (float) Math.PI / 3;
+				float CONE_ANGLE = (float) Math.PI / 3; 
 				SwipeGesture swipe = new SwipeGesture(gesture);
 				
 				System.out.println("Swiping with "+numSwipes+" fingers");
-				if(numSwipes < 2)
-					break;
-				
-				if (swipe.direction().angleTo(Vector.down()) < CONE_ANGLE) {
-					goDown(swipe.pointable(), swipe.position());
-				}
-				if (swipe.direction().angleTo(Vector.up()) < CONE_ANGLE) {
-					goUp(swipe.pointable(), swipe.position());
-				}
+
 
 				if (!lrSwipes.contains(swipe.id())
 						&& swipe.state().equals(Gesture.State.STATE_STOP)) {
@@ -208,6 +209,17 @@ public class Main extends Listener {
 						keyPress(Actions.SWIPE_LEFT);
 					}
 				}
+				
+				if(numSwipes < 2)
+					break;
+				
+				if (swipe.direction().angleTo(Vector.down()) < CONE_ANGLE) {
+					goDown(swipe.pointable(), swipe.position());
+				}
+				if (swipe.direction().angleTo(Vector.up()) < CONE_ANGLE) {
+					goUp(swipe.pointable(), swipe.position());
+				}
+				
 				System.out.println("Swipe id: " + swipe.id() + ", "
 						+ swipe.state() + ", position: " + swipe.position()
 						+ ", direction: " + swipe.direction() + ", speed: "
@@ -222,7 +234,7 @@ public class Main extends Listener {
 						+ screenTap.direction());
 				keyPress(Actions.SCREEN_TAP);
 				break;
-			// Type 1-2-3-4
+			// Type 1-2-3-42
 			case TYPE_KEY_TAP:
 				KeyTapGesture keyTap = new KeyTapGesture(gesture);
 				System.out.println("Key Tap id: " + keyTap.id() + ", "
@@ -230,13 +242,15 @@ public class Main extends Listener {
 						+ ", direction: " + keyTap.direction());
 				String numFromLeft = null;
 				int xPos = keyTap.position().getX() < 0 ? 0 : 1;
-				int yPos = keyTap.position().getY() < 100 ? 1 : 0;
+				int yPos = keyTap.position().getY() < 150 ? 1 : 0;
 				String[] actions = new String[] {Actions.KEY_TAP_ONE, Actions.KEY_TAP_TWO, Actions.KEY_TAP_THREE, Actions.KEY_TAP_FOUR};
 				numFromLeft = actions[xPos + 2 * yPos];
 				
-				System.out.println(xPos + 2 * yPos);
-
-				keyPress(numFromLeft);
+				System.out.println("Clicked key " + (xPos + 2 * yPos));
+				
+				if(numFromLeft != null)
+					keyPress(numFromLeft);
+				
 				break;
 			// Go forward/back
 			case TYPE_CIRCLE:
